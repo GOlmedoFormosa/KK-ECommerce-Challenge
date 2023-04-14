@@ -2,8 +2,10 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   NotFoundException,
   Post,
+  Req,
   Res,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
@@ -11,7 +13,7 @@ import * as bcrypt from 'bcryptjs';
 import { RegisterDto } from './dtos/register.dto';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -58,5 +60,12 @@ export class AuthController {
         password: undefined,
       },
     };
+  }
+
+  @Get('user')
+  async user(@Req() request: Request) {
+    const cookie = request.cookies['jwt'];
+    const data = await this.jwtService.verifyAsync(cookie);
+    return this.userService.findOne({ id: data['id'] });
   }
 }
