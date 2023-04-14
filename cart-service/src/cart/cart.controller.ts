@@ -7,6 +7,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
@@ -16,6 +17,7 @@ import { ProductService } from 'src/product/product.service';
 import { randomInt } from 'crypto';
 import { Cart } from './models/cart.entity';
 import { UserService } from 'src/user/user.service';
+import { AuthGuard } from 'src/auth/auth/auth.guard';
 
 @Controller('carts')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -107,6 +109,7 @@ export class CartController {
       relations: ['cart_items'],
     });
   }
+  @UseGuards(AuthGuard)
   @Post('checkout')
   async checkout(@Body('cart_id') cart_id: number) {
     if (!cart_id) {
