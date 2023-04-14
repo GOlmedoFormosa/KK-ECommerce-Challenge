@@ -1,12 +1,24 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  NotFoundException,
+  Post,
+  Res,
+} from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 
 import { RegisterDto } from './dtos/register.dto';
 import { UserService } from '../user/user.service';
+import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+  ) {}
   @Post('register')
   async register(@Body() body: RegisterDto) {
     const { password_confirm, ...data } = body;
@@ -18,5 +30,33 @@ export class AuthController {
       ...data,
       password: passHashed,
     });
+  }
+
+  @Post('login')
+  async login(
+    @Body('email') email: string,
+    @Body('password') password: string,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const user = await this.userService.findOne({ email });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (!(await bcrypt.compare(password, user.password))) {
+      throw new BadRequestException('Invalid credentials');
+    }
+    const jwt = await this.jwtService.signAsync({
+      id: user.id,
+    });
+
+    response.cookie('jwt', jwt, { httpOnly: true });
+    return {
+      message: 'success',
+      user: {
+        ...user,
+        password: undefined,
+      },
+    };
   }
 }
