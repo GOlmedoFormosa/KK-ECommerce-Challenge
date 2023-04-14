@@ -1,18 +1,18 @@
 version: '3.9'
 services:
   user-service:
-    build: .
+    build: ./user-service
     ports:
       - 8000:3000
     volumes:
       - ./user-service:/app
     depends_on:
-      - db
+      - user-service-db
   user-service-db:
     image: mysql:5.7.22
     restart: always
     environment:
-      MYSQL_DATABASE: KuantoKusta
+      MYSQL_DATABASE: kk_users
       MYSQL_USER: root
       MYSQL_PASSWORD: root
       MYSQL_ROOT_PASSWORD: root
