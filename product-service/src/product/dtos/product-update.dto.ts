@@ -1,5 +1,4 @@
-export interface ProductDTO {
-  _id?: string;
+export class ProductUpdateDto {
   title?: string;
   description?: string;
   price?: number;

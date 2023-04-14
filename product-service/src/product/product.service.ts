@@ -4,7 +4,8 @@ import mongoose, { Model } from 'mongoose';
 
 import { ProductDoc } from './interfaces/product-document.interface';
 import { Product } from './interfaces/product.interface';
-import { ProductDTO } from './dtos/product.dto';
+import { ProductCreateDto } from './dtos/product-create.dto';
+import { ProductUpdateDto } from './dtos/product-update.dto';
 
 @Injectable()
 export class ProductService {
@@ -43,7 +44,7 @@ export class ProductService {
     }));
   }
 
-  async insertOne(product: ProductDTO): Promise<Product> {
+  async insertOne(product: ProductCreateDto): Promise<Product> {
     const doc = await this.productModel.create(product);
     return {
       id: doc._id,
@@ -53,11 +54,9 @@ export class ProductService {
     };
   }
 
-  async updateOne(product: ProductDTO): Promise<Product> {
-    const { _id } = product;
-    const foundProduct = await this.productModel
-      .findOneAndUpdate({ _id }, product)
-      .exec();
+  async updateOne(id: string, product: ProductUpdateDto): Promise<Product> {
+    await this.productModel.findOneAndUpdate({ _id: id }, product).exec();
+    const foundProduct = await this.productModel.findById(id).exec();
     return {
       id: foundProduct._id,
       title: foundProduct.title,
@@ -67,6 +66,6 @@ export class ProductService {
   }
 
   deleteOne(id: string) {
-    return this.productModel.deleteOne({ id }).exec();
+    return this.productModel.findByIdAndRemove(id).exec();
   }
 }
