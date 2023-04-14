@@ -15,6 +15,7 @@ import { CartItemDto } from './dtos/cart-item.dto';
 import { ProductService } from 'src/product/product.service';
 import { randomInt } from 'crypto';
 import { Cart } from './models/cart.entity';
+import { UserService } from 'src/user/user.service';
 
 @Controller('carts')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -23,11 +24,16 @@ export class CartController {
     private readonly cartService: CartService,
     private readonly cartItemService: CartItemService,
     private readonly productService: ProductService,
+    private readonly userService: UserService,
   ) {}
   @Get('/:user_id')
   async get(@Param('user_id') user_id: number) {
     if (!user_id) {
       throw new BadRequestException('The user id is required');
+    }
+    const user = await this.userService.findOne(user_id);
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
     const cart = await this.cartService.findOne({
       options: { user_id, completed: false },
