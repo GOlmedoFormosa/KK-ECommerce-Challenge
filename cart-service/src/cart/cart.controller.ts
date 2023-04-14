@@ -20,7 +20,7 @@ export class CartController {
     private readonly productService: ProductService,
   ) {}
   @Get('/:userId')
-  async all(@Param('userId') userId: number) {
+  async get(@Param('userId') userId: number) {
     if (!userId) {
       throw new BadRequestException('The user id is required');
     }
