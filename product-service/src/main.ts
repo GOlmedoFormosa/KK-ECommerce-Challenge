@@ -9,7 +9,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.use(cookieParser());
   app.enableCors({
-    origin: 'http://localhost:3200', // URL of the client
+    origin: 'http://cart-service:3000',
     credentials: true,
   });
   await app.listen(3000);
