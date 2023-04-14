@@ -8,6 +8,7 @@ import {
   Post,
   Req,
   Res,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
@@ -16,6 +17,7 @@ import { Request, Response } from 'express';
 
 import { RegisterDto } from './dtos/register.dto';
 import { UserService } from '../user/user.service';
+import { AuthGuard } from './auth/auth.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
@@ -62,6 +64,7 @@ export class AuthController {
     };
   }
 
+  @UseGuards(AuthGuard)
   @Get('user')
   async user(@Req() request: Request) {
     const cookie = request.cookies['jwt'];
