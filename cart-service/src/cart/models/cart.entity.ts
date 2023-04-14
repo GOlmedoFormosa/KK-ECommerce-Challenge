@@ -1,4 +1,11 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { CartItem } from './cart-item.entity';
 import { Exclude, Expose } from 'class-transformer';
 
@@ -13,12 +20,15 @@ export class Cart {
   @Column()
   user_id: number;
 
-  @Column()
-  price: number;
-
   @Column({ default: false })
   @Exclude()
   complete: boolean;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 
   @OneToMany(() => CartItem, (cart_item) => cart_item.cart)
   cart_items: CartItem[];
