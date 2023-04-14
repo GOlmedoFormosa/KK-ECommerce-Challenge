@@ -26,9 +26,9 @@ export class ProductController {
     return this.productService.getSummary();
   }
 
-  @Post('/ids')
-  async getByIds(@Body('ids') ids: string[]): Promise<Product[]> {
-    return this.productService.getByIds(ids);
+  @Get('/:id')
+  async get(@Param('id') id: number) {
+    return this.productService.findOne({ id });
   }
 
   @Post()

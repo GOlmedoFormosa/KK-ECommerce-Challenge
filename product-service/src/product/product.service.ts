@@ -31,17 +31,16 @@ export class ProductService {
     }));
   }
 
-  async getByIds(ids: string[]): Promise<Product[]> {
-    const _ids = ids.map((id) => new mongoose.Types.ObjectId(id));
-    const ProductDocs = await this.productModel
-      .find({ _id: { $in: _ids } })
-      .exec();
-    return ProductDocs.map((doc) => ({
+  async findOne(id) {
+    const doc = await this.productModel.findById(
+      new mongoose.Types.ObjectId(id),
+    );
+    return {
       id: doc._id,
       title: doc.title,
       description: doc.description,
       price: doc.price,
-    }));
+    };
   }
 
   async insertOne(product: ProductCreateDto): Promise<Product> {
