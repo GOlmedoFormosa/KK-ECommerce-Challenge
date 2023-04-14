@@ -22,7 +22,7 @@ export class Cart {
 
   @Column({ default: false })
   @Exclude()
-  complete: boolean;
+  completed: boolean;
 
   @CreateDateColumn()
   created_at: Date;

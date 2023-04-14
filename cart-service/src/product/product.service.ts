@@ -8,11 +8,10 @@ export class ProductService {
   constructor(private httpService: HttpService) {}
 
   async findOne(id: string) {
-    const product: Product = await lastValueFrom(
-      this.httpService
-        .get(`http://localhost:8010/api/products/${id}`)
-        .pipe(map((response) => response.data)),
-    );
+    const request = this.httpService
+      .get(`http://product-service:3000/api/products/${id}`)
+      .pipe(map((response) => response.data));
+    const product: Product = await lastValueFrom(request);
     return product;
   }
 }
