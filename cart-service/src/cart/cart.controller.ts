@@ -13,6 +13,8 @@ import { CartService } from './cart.service';
 import { CartItemService } from './cart-item.service';
 import { CartItemDto } from './dtos/cart-item.dto';
 import { ProductService } from 'src/product/product.service';
+import { randomInt } from 'crypto';
+import { Cart } from './models/cart.entity';
 
 @Controller('carts')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -22,21 +24,23 @@ export class CartController {
     private readonly cartItemService: CartItemService,
     private readonly productService: ProductService,
   ) {}
-  @Get('/:userId')
-  async get(@Param('userId') userId: number) {
-    if (!userId) {
+  @Get('/:user_id')
+  async get(@Param('user_id') user_id: number) {
+    if (!user_id) {
       throw new BadRequestException('The user id is required');
     }
     const cart = await this.cartService.findOne({
-      options: { user_id: userId, completed: false },
+      options: { user_id, completed: false },
       relations: ['cart_items'],
     });
     if (cart) {
       return cart;
     }
-    return await this.cartService.save({
-      user_id: userId,
+    const new_cart: Cart = await this.cartService.save({
+      user_id,
     });
+    new_cart.cart_items = [];
+    return new_cart;
   }
 
   @Post('add')
@@ -48,6 +52,9 @@ export class CartController {
       },
       relations: ['cart', 'cart.cart_items'],
     });
+    if (cartItem?.cart && cartItem.cart.completed) {
+      throw new BadRequestException('This cart is already completed');
+    }
     if (cartItem) {
       cartItem.quantity += 1;
       await this.cartItemService.save(cartItem);
@@ -78,6 +85,11 @@ export class CartController {
       },
       relations: ['cart'],
     });
+
+    if (cartItem?.cart && cartItem.cart.completed) {
+      throw new BadRequestException('This cart is already completed');
+    }
+
     if (cartItem && cartItem.quantity > 1) {
       cartItem.quantity -= 1;
       await this.cartItemService.save(cartItem);
@@ -88,5 +100,30 @@ export class CartController {
       options: { id: body.cart_id },
       relations: ['cart_items'],
     });
+  }
+  @Post('checkout')
+  async checkout(@Body('cart_id') cart_id: number) {
+    if (!cart_id) {
+      throw new BadRequestException('The cart id is required');
+    }
+    const cart = await this.cartService.findOne({
+      options: { id: cart_id, completed: false },
+      relations: ['cart_items'],
+    });
+    if (!cart) {
+      throw new NotFoundException('Cart not found');
+    }
+
+    if (cart.completed) {
+      throw new BadRequestException('This cart is already completed');
+    }
+
+    if (cart.cart_items.length <= 0) {
+      throw new BadRequestException('The cart must have at least one product');
+    }
+    cart.transaction_id = randomInt(10000).toString();
+    cart.completed = true;
+    await this.cartService.save(cart);
+    return cart;
   }
 }
