@@ -1,20 +1,23 @@
 import {
   BadRequestException,
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   NotFoundException,
   Post,
   Req,
   Res,
+  UseInterceptors,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-
-import { RegisterDto } from './dtos/register.dto';
-import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 
+import { RegisterDto } from './dtos/register.dto';
+import { UserService } from '../user/user.service';
+
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -55,10 +58,7 @@ export class AuthController {
     response.cookie('jwt', jwt, { httpOnly: true });
     return {
       message: 'success',
-      user: {
-        ...user,
-        password: undefined,
-      },
+      user,
     };
   }
 
