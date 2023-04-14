@@ -20,3 +20,22 @@ services:
       - ./user-service/.dbdata:/var/lib/mysql
     ports:
       - 53066:3306
+  product-service:
+    build: ./product-service
+    ports:
+      - 8010:3000
+    volumes:
+      - ./product-service:/app
+    depends_on:
+      - product-service-db
+  product-service-db:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=kuantokusta
+      - MONGO_INITDB_ROOT_PASSWORD=kuantokusta
+      - MONGO_INITDB_DATABASE=kk_products
+    volumes:
+      - ./product-service/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo-js:ro
+      - ./product-service/.dbdata:/data/db
