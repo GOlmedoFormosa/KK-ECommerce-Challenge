@@ -25,15 +25,14 @@ from the Product microservice.
 * Documentation
 
 
+# Run project:
+Docker and Docker Compose are required to run the project. I ran out of time so I didn't get to install something like @nestjs/config to handle .env files, so you don't need to configure anything, you just need to run `docker-compose up`, and the projects should work in `http://localhost:8080/api/`.
 
-# Run the project:
-
-You should have Docker and Docker Compose installed. After running `docker-compose up` the project should be ready on `http://localhost:8080`.
+# Run tests:
+Unfortunately also due to lack of time I only got to create tests for the product service. To run them you have to move to the project folder (product-service) from the command console and run `yarn test`.
 
 ## Documentation
-
 The documentation for the services are available at the following URLs:
 - User-Service:    [http://localhost:8080/api/auth/docs](http://localhost:8080/api/auth/docs)
 - Product-Service: [http://localhost:8080/api/product/docs](http://localhost:8080/api/product/docs)
 - Cart-Service:    [http://localhost:8080/api/cart/docs](http://localhost:8080/api/cart/docs)
-
