@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model } from 'mongoose';
+import { Model } from 'mongoose';
 
 import { ProductDoc } from './interfaces/product-document.interface';
 import { Product } from './interfaces/product.interface';
@@ -31,10 +31,8 @@ export class ProductService {
     }));
   }
 
-  async findOne(id) {
-    const doc = await this.productModel.findById(
-      new mongoose.Types.ObjectId(id),
-    );
+  async findOne({ id }) {
+    const doc = await this.productModel.findOne({ _id: id }).exec();
     return {
       id: doc._id,
       title: doc.title,
@@ -54,8 +52,8 @@ export class ProductService {
   }
 
   async updateOne(id: string, product: ProductUpdateDto): Promise<Product> {
-    await this.productModel.findOneAndUpdate({ _id: id }, product).exec();
-    const foundProduct = await this.productModel.findById(id).exec();
+    await this.productModel.findOneAndUpdate({ _id: id }, product);
+    const foundProduct = await this.productModel.findOne({ _id: id }).exec();
     return {
       id: foundProduct._id,
       title: foundProduct.title,

@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CanActivate } from '@nestjs/common';
+import { faker } from '@faker-js/faker';
+import { randomInt } from 'crypto';
 
 import { ProductController } from './product.controller';
 import { ProductService } from './product.service';
@@ -8,12 +10,23 @@ import { ProductUpdateDto } from './dtos/product-update.dto';
 import { AuthGuard } from '../auth/auth/auth.guard';
 
 const testProduct = {
-  id: '1',
-  title: 'product1',
-  description: 'this is a description',
-  price: 400,
+  id: faker.datatype.uuid(),
+  title: faker.lorem.words(5),
+  description: faker.lorem.words(12),
+  price: randomInt(10, 100),
 };
-
+const testProduct2 = {
+  id: faker.datatype.uuid(),
+  title: faker.lorem.words(5),
+  description: faker.lorem.words(12),
+  price: randomInt(10, 100),
+};
+const testProduct3 = {
+  id: faker.datatype.uuid(),
+  title: faker.lorem.words(5),
+  description: faker.lorem.words(12),
+  price: randomInt(10, 100),
+};
 describe('ProductController', () => {
   const mock_AuthGuard: CanActivate = { canActivate: jest.fn(() => true) };
   let controller: ProductController;
@@ -26,33 +39,21 @@ describe('ProductController', () => {
         {
           provide: ProductService,
           useValue: {
-            getAll: jest.fn().mockResolvedValue([
-              testProduct,
-              {
-                id: '2',
-                title: 'TestProduct2',
-                description: 'Test Description 2',
-                price: 200,
-              },
-              {
-                id: '3',
-                title: 'TestProduct3',
-                description: 'Test Description 3',
-                price: 300,
-              },
-            ]),
+            getAll: jest
+              .fn()
+              .mockResolvedValue([testProduct, testProduct2, testProduct3]),
             getSummary: jest.fn().mockResolvedValue([
               {
                 id: testProduct.id,
                 price: testProduct.price,
               },
               {
-                id: '2',
-                price: 200,
+                id: testProduct2.id,
+                price: testProduct2.price,
               },
               {
-                id: '3',
-                price: 300,
+                id: testProduct3.id,
+                price: testProduct3.price,
               },
             ]),
             findOne: jest
@@ -93,18 +94,8 @@ describe('ProductController', () => {
     it('should get an array of products', () => {
       expect(controller.all()).resolves.toEqual([
         testProduct,
-        {
-          id: '2',
-          title: 'TestProduct2',
-          description: 'Test Description 2',
-          price: 200,
-        },
-        {
-          id: '3',
-          title: 'TestProduct3',
-          description: 'Test Description 3',
-          price: 300,
-        },
+        testProduct2,
+        testProduct3,
       ]);
     });
   });
@@ -117,12 +108,12 @@ describe('ProductController', () => {
           price: testProduct.price,
         },
         {
-          id: '2',
-          price: 200,
+          id: testProduct2.id,
+          price: testProduct2.price,
         },
         {
-          id: '3',
-          price: 300,
+          id: testProduct3.id,
+          price: testProduct3.price,
         },
       ]);
     });
@@ -137,9 +128,9 @@ describe('ProductController', () => {
   describe('create', () => {
     it('should create a new product', () => {
       const productCreateDto: ProductCreateDto = {
-        title: 'some title',
-        description: 'some desc',
-        price: 100,
+        title: faker.lorem.words(5),
+        description: faker.lorem.words(12),
+        price: randomInt(10, 100),
       };
       expect(controller.create(productCreateDto)).resolves.toEqual({
         id: 'some uuid create',
@@ -152,9 +143,9 @@ describe('ProductController', () => {
     it('should update a new cat', () => {
       const id = 'some uuid update';
       const productUpdateDto: ProductUpdateDto = {
-        title: 'some title',
-        description: 'some desc',
-        price: 100,
+        title: faker.lorem.words(5),
+        description: faker.lorem.words(12),
+        price: randomInt(10, 100),
       };
       expect(controller.update(id, productUpdateDto)).resolves.toEqual({
         id,
