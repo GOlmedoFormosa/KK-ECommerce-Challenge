@@ -18,6 +18,8 @@ import { randomInt } from 'crypto';
 import { Cart } from './models/cart.entity';
 import { UserService } from 'src/user/user.service';
 import { AuthGuard } from 'src/auth/auth/auth.guard';
+import { CartCheckoutDto } from './dtos/cart-checkout.dto';
+import { ApiParam } from '@nestjs/swagger';
 
 @Controller('carts')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -29,6 +31,7 @@ export class CartController {
     private readonly userService: UserService,
   ) {}
   @Get('/:user_id')
+  @ApiParam({ name: 'user_id', example: 1, type: Number })
   async get(@Param('user_id') user_id: number) {
     if (!user_id) {
       throw new BadRequestException('The user id is required');
@@ -111,7 +114,8 @@ export class CartController {
   }
   @UseGuards(AuthGuard)
   @Post('checkout')
-  async checkout(@Body('cart_id') cart_id: number) {
+  async checkout(@Body() body: CartCheckoutDto) {
+    const cart_id = body.cart_id;
     if (!cart_id) {
       throw new BadRequestException('The cart id is required');
     }
