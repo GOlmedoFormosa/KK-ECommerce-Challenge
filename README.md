@@ -26,7 +26,19 @@ from the Product microservice.
 
 
 # Run project:
+Run the following command to clone the repository:
+```
+  git clone https://github.com/GOlmedoFormosa/KK-ECommerce-Challenge
+```
+Move to the generated directory with the following command
+```
+  cd KK-ECommerce-Challenge
+```
 Docker and Docker Compose are required to run the project. I ran out of time so I didn't get to install something like @nestjs/config to handle .env files, so you don't need to configure anything, you just need to run `docker-compose up`, and the projects should work in `http://localhost:8080/api/`.
+```
+  docker-compose up
+```
+Please note that due to the number of images and dependency installations, it may take some time to install everything. However this will only happen when running the project for the first time, in the following occasions the project will run much faster.
 
 # Run tests:
 Unfortunately also due to lack of time I only got to create tests for the product service. To run them you have to move to the project folder (product-service) from the command console and run `yarn test`.
