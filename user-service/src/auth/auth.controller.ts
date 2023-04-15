@@ -34,10 +34,14 @@ export class AuthController {
       throw new BadRequestException('Password do not match!');
     }
     const passHashed = await bcrypt.hash(body.password, 12);
-    return this.userService.save({
+    const newUser = await this.userService.save({
       ...data,
       password: passHashed,
     });
+    return {
+      ...newUser,
+      password: undefined,
+    };
   }
 
   @Post('login')
@@ -61,8 +65,10 @@ export class AuthController {
     response.cookie('jwt', jwt, { httpOnly: true });
     return {
       message: 'success',
-      jwt, // TODO CHECK if is prod otherwise send the jwt
-      user,
+      user: {
+        ...user,
+        password: undefined,
+      },
     };
   }
 
