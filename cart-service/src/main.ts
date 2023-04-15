@@ -7,7 +7,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.use(cookieParser());
   app.enableCors({
     origin: 'http://localhost:3200', // URL of the client
@@ -29,7 +29,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config, {
     operationIdFactory: (controllerKey: string, methodKey: string) =>
       methodKey === 'getDocumentation'
-        ? 'getProductDocs'
+        ? 'getCartDocs'
         : `${controllerKey}_${methodKey}`,
   });
   SwaggerModule.setup('api/cart/docs', app, document);

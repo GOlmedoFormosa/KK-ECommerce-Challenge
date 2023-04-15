@@ -8,7 +8,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.use(cookieParser());
   app.enableCors({
     origin: 'http://localhost:3200', // URL of the client
@@ -16,19 +16,14 @@ async function bootstrap() {
   });
 
   const config = new DocumentBuilder()
-    .setTitle('User Service')
-    .setDescription('Service to register, authenticate and logout users')
+    .setTitle('Auth Service')
+    .setDescription('Service to register and authenticate users')
     .setVersion('1.0')
-    .addCookieAuth('authCookie', {
-      type: 'http',
-      in: 'Header',
-      scheme: 'Bearer',
-    })
     .build();
   const document = SwaggerModule.createDocument(app, config, {
     operationIdFactory: (controllerKey: string, methodKey: string) =>
       methodKey === 'getDocumentation'
-        ? 'getProductDocs'
+        ? 'getUserDocs'
         : `${controllerKey}_${methodKey}`,
   });
   SwaggerModule.setup('api/auth/docs', app, document);

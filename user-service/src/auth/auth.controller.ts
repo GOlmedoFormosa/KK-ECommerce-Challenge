@@ -18,6 +18,7 @@ import { Request, Response } from 'express';
 import { RegisterDto } from './dtos/register.dto';
 import { UserService } from '../user/user.service';
 import { AuthGuard } from './auth/auth.guard';
+import { LoginDto } from './dtos/login.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
@@ -41,10 +42,10 @@ export class AuthController {
 
   @Post('login')
   async login(
-    @Body('email') email: string,
-    @Body('password') password: string,
+    @Body() body: LoginDto,
     @Res({ passthrough: true }) response: Response,
   ) {
+    const { email, password } = body;
     const user = await this.userService.findOne({ email });
     if (!user) {
       throw new NotFoundException('User not found');
