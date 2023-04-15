@@ -34,7 +34,7 @@ Move to the generated directory with the following command
 ```
   cd KK-ECommerce-Challenge
 ```
-Docker and Docker Compose are required to run the project. I ran out of time so I didn't get to install something like @nestjs/config to handle .env files, so you don't need to configure anything, you just need to run `docker-compose up`, and the projects should work in `http://localhost:8080/api/`.
+Docker and Docker Compose are required to run the project. I ran out of time so I didn't get to install something like @nestjs/config to handle .env files, so you don't need to configure anything, you just need to run `docker-compose up`, and the projects should work in `http://localhost:8080/api/{products|auth|cart}`.
 ```
   docker-compose up
 ```
@@ -43,8 +43,16 @@ Please note that due to the number of images and dependency installations, it ma
 # Run tests:
 Unfortunately also due to lack of time I only got to create tests for the product service. To run them you have to move to the project folder (product-service) from the command console and run `yarn test`.
 
-## Documentation
+# Documentation
 The documentation for the services are available at the following URLs:
 - User-Service:    [http://localhost:8080/api/auth/docs](http://localhost:8080/api/auth/docs)
 - Product-Service: [http://localhost:8080/api/product/docs](http://localhost:8080/api/product/docs)
 - Cart-Service:    [http://localhost:8080/api/cart/docs](http://localhost:8080/api/cart/docs)
+
+# Some comments
+
+- When you start the project you run a seeder with products so you don't have to add them one by one, however there is the endpoint to add products (note that you need to be logged in to add products).
+- Do not add any migration to add users, because when you enter the swagger doc, in the register and login part there are already default values so you can generate a user and test the app with a few clicks.
+- The authentication is done with jwt and cookies, the cookies go with httpOnly for security.
+- This assuming that there is always a user logged in was a problem for me, what I did was to leave the endpoint to get cart, and add and remove products without being authenticated, in the same way the endpoint to get cart requires a user id.
+- I added an extra endpoint in the cart for checkout, this endpoint does require authentication.
