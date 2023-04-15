@@ -12,7 +12,7 @@ import { Product } from './interfaces/product.interface';
 import { ProductService } from './product.service';
 import { ProductCreateDto } from './dtos/product-create.dto';
 import { ProductUpdateDto } from './dtos/product-update.dto';
-import { AuthGuard } from 'src/auth/auth/auth.guard';
+import { AuthGuard } from '../auth/auth/auth.guard';
 
 @Controller('products')
 export class ProductController {
@@ -29,7 +29,7 @@ export class ProductController {
   }
 
   @Get('/:id')
-  async get(@Param('id') id: number) {
+  async get(@Param('id') id: string) {
     return this.productService.findOne({ id });
   }
 
@@ -51,7 +51,11 @@ export class ProductController {
   @UseGuards(AuthGuard)
   @Delete('/:id')
   async delete(@Param('id') id: string) {
-    await this.productService.deleteOne(id);
-    return { message: 'success' };
+    try {
+      await this.productService.deleteOne(id);
+      return { message: 'success' };
+    } catch (err) {
+      return { message: err.message };
+    }
   }
 }
