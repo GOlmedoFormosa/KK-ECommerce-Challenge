@@ -7,6 +7,9 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext) {
     try {
       const request = context.switchToHttp().getRequest();
+      if (!request || !request.cookies || !request.cookies['jwt']) {
+        return false;
+      }
       const user = await this.authService.authorize(request.cookies['jwt']);
       return user ? true : false;
     } catch (err) {
