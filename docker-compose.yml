@@ -59,3 +59,11 @@ services:
       - ./cart-service/.dbdata:/var/lib/mysql
     ports:
       - 63066:3306
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - 8080:80
+    depends_on:
+      - product-service
+      - user-service
+      - cart-service
