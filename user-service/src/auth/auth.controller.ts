@@ -60,6 +60,7 @@ export class AuthController {
     response.cookie('jwt', jwt, { httpOnly: true });
     return {
       message: 'success',
+      jwt, // TODO CHECK if is prod otherwise send the jwt
       user,
     };
   }
